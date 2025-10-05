@@ -127,14 +127,22 @@ Content-Type: text/plain
                                 if filename_match:
                                     filename = filename_match.group(1).decode('utf-8')
                                     
+                                    # 파일명에 타임스탬프 추가하여 중복 방지
+                                    now = datetime.datetime.now()
+                                    timestamp = now.strftime("%Y-%m-%d-%H-%M-%S")
+                                    name, ext = os.path.splitext(filename)
+                                    new_filename = f"{name}_{timestamp}{ext}"
+                                    
                                     # 이미지 데이터 저장
-                                    image_path = os.path.join(self.IMAGE_DIR, filename)
+                                    image_path = os.path.join(self.IMAGE_DIR, new_filename)
                                     with open(image_path, 'wb') as f:
                                         # multipart 데이터 끝부분 정리
                                         image_data = body.rstrip(b'\r\n--')
                                         f.write(image_data)
                                     
                                     print(f"이미지 저장 완료: {image_path}")
+                                    print(f"원본 파일명: {filename}")
+                                    print(f"저장된 파일명: {new_filename}")
                                     
         except Exception as e:
             print(f"이미지 추출 중 오류: {e}")
